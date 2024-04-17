@@ -106,9 +106,8 @@ string basic_report(const std::vector<Conveyor*>& assembly_line){
 string horizontal_report(const vector<Conveyor*>& assembly_line) {
     size_t maxLines = 0;
     map<char, char> replacements = {{'|', '-'}, {'-', '|'}, {'/', '\\'}, {'\\', '/'}};
-    vector<string> rotatedSections; // Stores the rotated sections for each conveyor.
+    vector<string> rotatedSections;
 
-    // Find the maximum number of lines across all conveyors for padding.
     for (const auto& conveyor : assembly_line) {
         stringstream ss;
         ss << *conveyor;
@@ -120,7 +119,6 @@ string horizontal_report(const vector<Conveyor*>& assembly_line) {
         maxLines = max(maxLines, lineCount);
     }
 
-    // Process and rotate each conveyor.
     for (auto it = assembly_line.rbegin(); it != assembly_line.rend(); ++it) {
         stringstream ss;
         ss << **it;
@@ -130,30 +128,29 @@ string horizontal_report(const vector<Conveyor*>& assembly_line) {
             lines.push_back(temp);
         }
 
-        string rotatedConveyor; // Accumulate the rotated representation here.
-        for (size_t col = 0; col < 5; ++col) { // Assuming each conveyor's ASCII art is 5 characters wide.
+        string rotatedConveyor;
+        for (size_t col = 5; col-- > 0; ) {
             for (size_t row = 0; row < maxLines; ++row) {
                 if (row < lines.size()) {
                     char ch = col < lines[row].size() ? lines[row][col] : ' ';
-                    // Apply character replacements if applicable.
                     if (replacements.find(ch) != replacements.end()) {
                         ch = replacements[ch];
                     }
                     rotatedConveyor += ch;
                 } else {
-                    rotatedConveyor += ' '; // Padding for conveyors with less than maxLines lines.
+                    rotatedConveyor += ' ';
                 }
             }
-            rotatedConveyor += "\n"; // End the current line of the rotated section.
+            rotatedConveyor += "\n";
         }
-        rotatedSections.push_back(rotatedConveyor); // Add the rotated conveyor to the sections.
+        rotatedSections.push_back(rotatedConveyor);
     }
 
-    // Combine all rotated sections into the final report, preserving the reverse order processed.
     string report;
     for (const auto& section : rotatedSections) {
-        report += section + "\n"; // Add an extra line to separate conveyors visually.
+        report += section + string(maxLines, ' ') + "\n";
     }
 
     return report;
 }
+

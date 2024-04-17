@@ -1,2 +1,0 @@
-# eggland
-my egg project
